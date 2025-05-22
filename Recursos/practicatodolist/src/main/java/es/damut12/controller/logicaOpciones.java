@@ -23,7 +23,7 @@ public class logicaOpciones extends HttpServlet {
 
     private final String url = "jdbc:sqlite:D:\\Usuarios\\calvo\\Desktop\\DAM\\PracticaJavaWeb_BBDD\\Recursos\\tareas.db";
     private final List<Tarea> listaTareas = new ArrayList<>();
-    private final Map<String, List<Tarea>> mapaTareas = new HashMap<>();
+    private final Map<Integer, List<Tarea>> mapaTareas = new HashMap<>();
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -31,13 +31,16 @@ public class logicaOpciones extends HttpServlet {
 
         // Obtiene el id desde el parámetro 'id' o 'usuario'
         String user = request.getParameter("usuario");
+        String categoriaID = request.getParameter("categoria");
+        String tituloTarea = request.getParameter("titulo");
+        String descripcionTarea = request.getParameter("descripcion");
 
         // Limpia la lista antes de cada consulta para evitar acumulación de tareas de peticiones anteriores
         listaTareas.clear();
 
         switch (opcion) {
             case "ver": {
-                opcionElegida(opcion, user);
+                opcionElegida(opcion, user, categoriaID, tituloTarea, descripcionTarea);
                 System.out.println(mapaTareas);
 
                 // Establecemos como atributos tanto la lista como el mapa
@@ -50,7 +53,7 @@ public class logicaOpciones extends HttpServlet {
             }
 
             case "insertar": {
-                //recojo informacion de opciones.jsp
+                opcionElegida(opcion, user, categoriaID, tituloTarea, descripcionTarea);
                 //lógica relacionada con la inserción. Pensar en gestionar llamando a otros métodos para modularizar
                 //envío al jsp de respuesta lo que quiera
                 //llamo al jsp que quiero que se muestre
@@ -67,20 +70,20 @@ public class logicaOpciones extends HttpServlet {
     }
 
     // estructura métodos que modularizan las opciones
-    public void opcionElegida(String opcion, String user) {
+    public void opcionElegida(String opcion, String user, String categoriaID, String tituloTarea, String descripcionTarea) {
         switch (opcion) {
             case "ver":
                 verTareas(user, mapaTareas);
                 break;
             case "insertar":
-                insertar(user);
+                insertar(user, categoriaID, tituloTarea, descripcionTarea);
                 break;
             default:
                 break;
         }
     }
 
-    public void verTareas(String user, Map<String, List<Tarea>> mapa) {
+    public void verTareas(String user, Map<Integer, List<Tarea>> mapa) {
         try {
             Class.forName("org.sqlite.JDBC");
 
@@ -113,7 +116,7 @@ public class logicaOpciones extends HttpServlet {
                         listaTareas.add(tarea);
 
                         // Si conseguimos una tarea con un nombre de categoria que no se haya registrado anteriormente, creamos una nueva clave y asociamos a esa clave nuevas tareas
-                        mapa.computeIfAbsent(nombreCategoria, k -> new ArrayList<>()).add(tarea);
+                        mapa.computeIfAbsent(categoriaId, k -> new ArrayList<>()).add(tarea);
 
                     }
 
@@ -129,9 +132,32 @@ public class logicaOpciones extends HttpServlet {
             }
         } catch (ClassNotFoundException e) {
         }
+
     }
 
-    public void insertar(String user) {
+    public void insertar(String user, String categoriaID, String tituloTarea, String descripcionTarea) {
+        try {
+            Class.forName("org.sqlite.JDBC");
 
+            // Conseguimos el numero de tareas con ese mismo ID de categoria
+            // y le sumamos 1 para conseguir el nuevo ID de la tarea
+            int idTarea = mapaTareas.get(categoriaID).size() + 1;
+
+            System.out.println("ID de la tarea: " + idTarea);
+
+            try (Connection connection = DriverManager.getConnection(url); PreparedStatement ps = connection.prepareStatement("insert into tareas(id, usuario_id, categoria_id, titulo, descripcion, completada, fecha_creacion) values(?, ?, ?, ?, ?, 0, CURRENT_TIMESTAMP)")) {
+                ps.setInt(1, idTarea);
+                ps.setInt(2, Integer.parseInt(user));
+                ps.setInt(3, Integer.parseInt(categoriaID));
+                ps.setString(4, tituloTarea);
+                ps.setString(5, descripcionTarea);
+
+            } catch (Exception e) {
+                System.out.println("Error al insertar la tarea");
+                System.out.println(e.getMessage());
+            }
+        } catch (ClassNotFoundException e) {
+
+        }
     }
 }
