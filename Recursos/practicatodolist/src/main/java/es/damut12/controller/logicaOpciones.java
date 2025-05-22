@@ -21,6 +21,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet(value = "/opcionesL")
 public class logicaOpciones extends HttpServlet {
 
+    private String mensaje = "Error al conectar a la base de datos";
     private final String url = "jdbc:sqlite:D:\\Usuarios\\calvo\\Desktop\\DAM\\PracticaJavaWeb_BBDD\\Recursos\\tareas.db";
     private final List<Tarea> listaTareas = new ArrayList<>();
     private final Map<String, List<Tarea>> mapaTareas = new HashMap<>();
@@ -64,66 +65,50 @@ public class logicaOpciones extends HttpServlet {
 
     // estructura métodos que modularizan las opciones
     public void opcionElegida(String opcion, String user, Map<String, List<Tarea>> mapa) {
-        mapa.clear();
-        listaTareas.clear(); // Asegura que también se limpie la lista
         try {
             Class.forName("org.sqlite.JDBC");
 
-            // Intentamos conectar a la BBDD
-            try (Connection connection = DriverManager.getConnection(url)) {
-                System.out.println("Conectado a BBDD");
+            try (Connection connection = DriverManager.getConnection(url); PreparedStatement ps = connection.prepareStatement(
+                    "SELECT T.titulo, T.descripcion, T.completada, T.fecha_creacion, T.categoria_id, C.nombre "
+                    + "FROM TAREAS T "
+                    + "INNER JOIN CATEGORIAS C ON T.categoria_id = C.id "
+                    + "INNER JOIN USUARIOS U ON T.usuario_id = U.id "
+                    + "WHERE U.id = ?"
+            )) {
 
-                switch (opcion) {
-                    case "ver": {
+                System.out.println(user);
 
-                        try (PreparedStatement ps = connection.prepareStatement("SELECT C.ID, C.NOMBRE, T.TITULO, T.DESCRIPCION, T.COMPLETADA, T.FECHA_CREACION "
-                                + "FROM TAREAS T "
-                                + "JOIN CATEGORIAS C ON T.CATEGORIA_ID = C.ID "
-                                + "JOIN USUARIOS U ON T.USUARIO_ID = U.ID "
-                                + "WHERE U.NOMBRE_USUARIO = ?;")) {
+                ps.setString(1, user);
 
-                            // Establecemos el nombre del usuario
-                            ps.setString(1, user);
+                try (ResultSet rs = ps.executeQuery()) {
 
-                            try (ResultSet rs = ps.executeQuery()) {
-                                while (rs.next()) {
-                                    String titulo = rs.getString("titulo");
-                                    System.out.println(titulo);
-                                    String descripcion = rs.getString("descripcion");
-                                    System.out.println(descripcion);
-                                    boolean completada = rs.getBoolean("completada");
-                                    System.out.println(completada);
-                                    String fechaCreacion = rs.getString("fecha_creacion");
-                                    System.out.println(fechaCreacion);
-                                    String nombreCategoria = rs.getString("nombre");
-                                    System.out.println(nombreCategoria);
-                                    int idCategoria = rs.getInt("categoria_id");
-                                    System.out.println(idCategoria);
+                    while (rs.next()) {
+                        String titulo = rs.getString("titulo");
+                        String descripcion = rs.getString("descripcion");
+                        boolean completada = rs.getBoolean("completada");
+                        String fechaCreacion = rs.getString("fecha_creacion");
+                        int categoriaId = rs.getInt("categoria_id");
+                        String nombreCategoria = rs.getString("nombre");
 
-                                    Tarea t = new Tarea(idCategoria, nombreCategoria, titulo, descripcion, completada, fechaCreacion);
+                        Tarea tarea = new Tarea(categoriaId, nombreCategoria, titulo, descripcion, completada, fechaCreacion);
+                        listaTareas.add(tarea);
+                        // Agrupar por nombre de categoría
+                        mapa.computeIfAbsent(nombreCategoria, k -> new ArrayList<>()).add(tarea);
+                        System.out.println("Tarea encontrada: " + tarea);
 
-                                    // Agrupar por nombre de categoría
-                                    mapa.computeIfAbsent(nombreCategoria, k -> new ArrayList<>()).add(t);
-                                }
-
-                            } catch (SQLException e) {
-                                System.out.println("No se realizo la consulta");
-                            }
-                        } catch (SQLException e) {
-                            System.out.println("No se ha preparado la consulta");
-                        }
-
-                        break;
+                        System.out.println(mapa.get(nombreCategoria).get(5));
                     }
+                    System.out.println("Total tareas encontradas: " + listaTareas.size());
 
-                    default:
-                        break;
+                } catch (SQLException e) {
+                    System.out.println("Error al ejecutar la consulta");
+                    System.out.println(e.getMessage());
                 }
-            } catch (Exception e) {
-
+            } catch (SQLException e) {
+                System.out.println("Error al conectar a la base de datos");
+                System.out.println(e.getMessage());
             }
         } catch (ClassNotFoundException e) {
-
         }
     }
 }
