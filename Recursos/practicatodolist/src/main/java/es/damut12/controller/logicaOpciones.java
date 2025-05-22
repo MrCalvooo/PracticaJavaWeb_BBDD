@@ -21,7 +21,6 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet(value = "/opcionesL")
 public class logicaOpciones extends HttpServlet {
 
-    private String mensaje = "Error al conectar a la base de datos";
     private final String url = "jdbc:sqlite:D:\\Usuarios\\calvo\\Desktop\\DAM\\PracticaJavaWeb_BBDD\\Recursos\\tareas.db";
     private final List<Tarea> listaTareas = new ArrayList<>();
     private final Map<String, List<Tarea>> mapaTareas = new HashMap<>();

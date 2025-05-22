@@ -16,7 +16,7 @@
                     <td colspan="4">No hay tareas para mostrar.</td>
                 </tr>
                 <% } else {%>
-                    <h2><a href="<%=request.getContextPath()%>/hello-servlet">Volver a opciones</a></h2>
+                    <h2><a href="<%=request.getContextPath()%>/opcionesL">Volver a opciones</a></h2>
 
                     <%for (Map.Entry<String, List<Tarea>> entry : mapa.entrySet()) {
                         String cat = entry.getKey();
