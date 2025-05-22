@@ -20,9 +20,9 @@
 
                     <!--Recorremos el mapa-->
                     <%for (Map.Entry<String, List<Tarea>> entry : mapa.entrySet()) {
-                        <!--Almacenamos la clave en una variable-->
+                        // Almacenamos la clave en una variable
                         String cat = entry.getKey();
-                        <!--Obtenemos la lista de cada clave-->
+                        // Obtenemos la lista de cada clave
                         List<Tarea> tareas = entry.getValue();%>
                             <div class="container">
 

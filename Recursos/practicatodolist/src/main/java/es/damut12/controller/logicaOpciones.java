@@ -37,12 +37,12 @@ public class logicaOpciones extends HttpServlet {
 
         switch (opcion) {
             case "ver": {
-                opcionElegida(opcion, user, mapaTareas);
+                opcionElegida(opcion, user);
                 System.out.println(mapaTareas);
 
                 // Establecemos como atributos tanto la lista como el mapa
                 request.setAttribute("listaTareas", listaTareas);
-                request.setAttribute("mapaTareas", mapaTareas); 
+                request.setAttribute("mapaTareas", mapaTareas);
 
                 // Enviamos estos datos al JSP de verTareas
                 request.getRequestDispatcher("/WEB-INF/views/verTareas.jsp").forward(request, response);
@@ -67,7 +67,20 @@ public class logicaOpciones extends HttpServlet {
     }
 
     // estructura métodos que modularizan las opciones
-    public void opcionElegida(String opcion, String user, Map<String, List<Tarea>> mapa) {
+    public void opcionElegida(String opcion, String user) {
+        switch (opcion) {
+            case "ver":
+                verTareas(user, mapaTareas);
+                break;
+            case "insertar":
+                insertar(user);
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void verTareas(String user, Map<String, List<Tarea>> mapa) {
         try {
             Class.forName("org.sqlite.JDBC");
 
@@ -101,9 +114,9 @@ public class logicaOpciones extends HttpServlet {
 
                         // Si conseguimos una tarea con un nombre de categoria que no se haya registrado anteriormente, creamos una nueva clave y asociamos a esa clave nuevas tareas
                         mapa.computeIfAbsent(nombreCategoria, k -> new ArrayList<>()).add(tarea);
-                        System.out.println("Tarea encontrada: " + tarea);
 
                     }
+
                     System.out.println("Total tareas encontradas: " + listaTareas.size());
 
                 } catch (SQLException e) {
@@ -116,5 +129,9 @@ public class logicaOpciones extends HttpServlet {
             }
         } catch (ClassNotFoundException e) {
         }
+    }
+
+    public void insertar(String user) {
+
     }
 }
