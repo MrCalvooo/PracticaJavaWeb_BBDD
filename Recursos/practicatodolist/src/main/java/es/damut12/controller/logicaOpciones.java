@@ -39,8 +39,12 @@ public class logicaOpciones extends HttpServlet {
             case "ver": {
                 opcionElegida(opcion, user, mapaTareas);
                 System.out.println(mapaTareas);
+
+                // Establecemos como atributos tanto la lista como el mapa
                 request.setAttribute("listaTareas", listaTareas);
-                request.setAttribute("mapaTareas", mapaTareas); // Pasa el mapa al JSP
+                request.setAttribute("mapaTareas", mapaTareas); 
+
+                // Enviamos estos datos al JSP de verTareas
                 request.getRequestDispatcher("/WEB-INF/views/verTareas.jsp").forward(request, response);
                 break;
             }
@@ -67,6 +71,7 @@ public class logicaOpciones extends HttpServlet {
         try {
             Class.forName("org.sqlite.JDBC");
 
+            // Conectamos a la base de datos y preparamos la consulta
             try (Connection connection = DriverManager.getConnection(url); PreparedStatement ps = connection.prepareStatement(
                     "SELECT T.titulo, T.descripcion, T.completada, T.fecha_creacion, T.categoria_id, C.nombre "
                     + "FROM TAREAS T "
@@ -77,10 +82,12 @@ public class logicaOpciones extends HttpServlet {
 
                 System.out.println(user);
 
+                // Ponemos como parametro el id del usuario
                 ps.setString(1, user);
 
                 try (ResultSet rs = ps.executeQuery()) {
 
+                    // Y al ejecutar la consulta almacenamos en una lista todas las tareas que nos devuela el ResultSet
                     while (rs.next()) {
                         String titulo = rs.getString("titulo");
                         String descripcion = rs.getString("descripcion");
@@ -91,7 +98,8 @@ public class logicaOpciones extends HttpServlet {
 
                         Tarea tarea = new Tarea(categoriaId, nombreCategoria, titulo, descripcion, completada, fechaCreacion);
                         listaTareas.add(tarea);
-                        // Agrupar por nombre de categoría
+
+                        // Si conseguimos una tarea con un nombre de categoria que no se haya registrado anteriormente, creamos una nueva clave y asociamos a esa clave nuevas tareas
                         mapa.computeIfAbsent(nombreCategoria, k -> new ArrayList<>()).add(tarea);
                         System.out.println("Tarea encontrada: " + tarea);
 

@@ -18,12 +18,16 @@
                 <% } else {%>
                     <h2><a href="<%=request.getContextPath()%>/hello-servlet">Volver a opciones</a></h2>
 
+                    <!--Recorremos el mapa-->
                     <%for (Map.Entry<String, List<Tarea>> entry : mapa.entrySet()) {
+                        <!--Almacenamos la clave en una variable-->
                         String cat = entry.getKey();
+                        <!--Obtenemos la lista de cada clave-->
                         List<Tarea> tareas = entry.getValue();%>
                             <div class="container">
 
                                 <h2 class="categoria-titulo">
+                                    <!--Mostramos el nombre de la categoria y su id-->
                                     <%=cat %> : <%= tareas.get(0).getIdCategoria()%>
                                 </h2>
                                 <table>
@@ -36,6 +40,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        <!--Recorremos la lista (que es el valor del mapa) y mostramos sus datos-->
                                         <%for (Tarea tarea : tareas) {%>
                                             <tr>
                                                 <td>
