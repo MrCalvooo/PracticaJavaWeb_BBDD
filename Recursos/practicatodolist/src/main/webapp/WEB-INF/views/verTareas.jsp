@@ -24,7 +24,7 @@
                             <div class="container">
 
                                 <h2 class="categoria-titulo">
-                                    <%=cat %> : <!--identificador categoria-->
+                                    <%=cat %> : <%= tareas.get(0).getIdCategoria()%>
                                 </h2>
                                 <table>
                                     <thead>

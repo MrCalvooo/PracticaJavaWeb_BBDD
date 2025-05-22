@@ -96,7 +96,6 @@ public class logicaOpciones extends HttpServlet {
                         mapa.computeIfAbsent(nombreCategoria, k -> new ArrayList<>()).add(tarea);
                         System.out.println("Tarea encontrada: " + tarea);
 
-                        System.out.println(mapa.get(nombreCategoria).get(5));
                     }
                     System.out.println("Total tareas encontradas: " + listaTareas.size());
 
