@@ -10,34 +10,54 @@
         </head>
 
         <body>
-            <%Map<String, List<Tarea>> mapaTareas = (Map) request.getAttribute("mapaTareas");
-                if (mapa.isEmpty() || mapa == null) { %>
+            <%Map<String, List<Tarea>> mapa = (Map) request.getAttribute("mapaTareas");
+                if (mapa == null || mapa.isEmpty()) { %>
                 <tr>
                     <td colspan="4">No hay tareas para mostrar.</td>
                 </tr>
                 <% } else {%>
                     <h2><a href="<%=request.getContextPath()%>/hello-servlet">Volver a opciones</a></h2>
 
+                    <%for (Map.Entry<String, List<Tarea>> entry : mapa.entrySet()) {
+                        String cat = entry.getKey();
+                        List<Tarea> tareas = entry.getValue();%>
+                            <div class="container">
 
-                    <div class="container">
+                                <h2 class="categoria-titulo">
+                                    <%=cat %> : <!--identificador categoria-->
+                                </h2>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Título</th>
+                                            <th>Descripción</th>
+                                            <th>Estado</th>
+                                            <th>Fecha de creación</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <%for (Tarea tarea : tareas) {%>
+                                            <tr>
+                                                <td>
+                                                    <%=tarea.getTitulo()%>
+                                                </td>
+                                                <td>
+                                                    <%=tarea.getDescripcion()%>
+                                                </td>
+                                                <td>
+                                                    <%=tarea.isCompletada()%>
+                                                </td>
+                                                <td>
+                                                    <%=tarea.getFechaCreacion()%>
+                                                </td>
+                                            </tr>
+                                            <%}%>
+                                    </tbody>
+                                </table>
+                            </div>
 
-                        <h2 class="categoria-titulo"><!--nombre categoria--> : <!--identificador categoria-->
-                        </h2>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Título</th>
-                                    <th>Descripción</th>
-                                    <th>Estado</th>
-                                    <th>Fecha de creación</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-
-                            </tbody>
-                        </table>
-                    </div>
-                    <%}%>
+                            <%}%>
+                                <%}%>
         </body>
 
         </html>

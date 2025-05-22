@@ -38,6 +38,7 @@ public class logicaOpciones extends HttpServlet {
         switch (opcion) {
             case "ver": {
                 opcionElegida(opcion, user, mapaTareas);
+                System.out.println(mapaTareas);
                 request.setAttribute("listaTareas", listaTareas);
                 request.setAttribute("mapaTareas", mapaTareas); // Pasa el mapa al JSP
                 request.getRequestDispatcher("/WEB-INF/views/verTareas.jsp").forward(request, response);
@@ -87,11 +88,17 @@ public class logicaOpciones extends HttpServlet {
                             try (ResultSet rs = ps.executeQuery()) {
                                 while (rs.next()) {
                                     String titulo = rs.getString("titulo");
+                                    System.out.println(titulo);
                                     String descripcion = rs.getString("descripcion");
+                                    System.out.println(descripcion);
                                     boolean completada = rs.getBoolean("completada");
+                                    System.out.println(completada);
                                     String fechaCreacion = rs.getString("fecha_creacion");
+                                    System.out.println(fechaCreacion);
                                     String nombreCategoria = rs.getString("nombre");
+                                    System.out.println(nombreCategoria);
                                     int idCategoria = rs.getInt("categoria_id");
+                                    System.out.println(idCategoria);
 
                                     Tarea t = new Tarea(idCategoria, nombreCategoria, titulo, descripcion, completada, fechaCreacion);
 
