@@ -19,7 +19,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet(value = "/opcionesL")
 public class logicaOpciones extends HttpServlet {
 
-    private final String url = "jdbc:sqlite:D:\\Usuarios\\calvo\\Desktop\\DAM\\JavaWeb\\ConexionesBBDD\\PracticaEvaluable\\Recursos\\tareas.db";
+    private final String url = "jdbc:sqlite:D:\\Usuarios\\calvo\\Desktop\\DAM\\PracticaJavaWeb_BBDD\\Recursos\\tareas.db";
     private final List<Tarea> listaTareas = new ArrayList<>();
 
     @Override

@@ -32,7 +32,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class HelloServlet extends HttpServlet {
 
     // URL de la base de datos para windows
-    private final String url = "jdbc:sqlite:D:\\Usuarios\\calvo\\Desktop\\DAM\\JavaWeb\\ConexionesBBDD\\PracticaEvaluable\\Recursos\\tareas.db";
+    private final String url = "jdbc:sqlite:D:\\Usuarios\\calvo\\Desktop\\DAM\\PracticaJavaWeb_BBDD\\Recursos\\tareas.db";
     private String mensaje = "";
 
     @Override
