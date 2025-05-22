@@ -32,25 +32,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <% for (Tarea tarea : listaTareas) {%>
-                                        <tr>
-                                            <td>
-                                                <%=tarea.getTitulo()%>
-                                            </td>
-
-                                            <td>
-                                                <%=tarea.getDescripcion()%>
-                                            </td>
-
-                                            <td>
-                                                <%= tarea.isCompletada() ? "Completada" : "Pendiente" %>
-                                            </td>
-
-                                            <td>
-                                                <%=tarea.getFechaCreacion()%>
-                                            </td>
-                                        </tr>
-                                        <%} }%>
+                                    
                                 </tbody>
                             </table>
                         </div>

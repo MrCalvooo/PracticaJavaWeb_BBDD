@@ -7,7 +7,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import es.damut12.model.Tarea;
 import jakarta.servlet.ServletException;
@@ -21,6 +23,7 @@ public class logicaOpciones extends HttpServlet {
 
     private final String url = "jdbc:sqlite:D:\\Usuarios\\calvo\\Desktop\\DAM\\PracticaJavaWeb_BBDD\\Recursos\\tareas.db";
     private final List<Tarea> listaTareas = new ArrayList<>();
+    private final Map<String, List<Tarea>> mapaTareas = new HashMap<>();
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -34,7 +37,7 @@ public class logicaOpciones extends HttpServlet {
 
         switch (opcion) {
             case "ver": {
-                opcionElegida(opcion, user);
+                opcionElegida(opcion, user, mapaTareas);
                 request.setAttribute("listaTareas", listaTareas);
                 request.getRequestDispatcher("/WEB-INF/views/verTareas.jsp").forward(request, response);
                 break;
@@ -58,8 +61,8 @@ public class logicaOpciones extends HttpServlet {
     }
 
     // estructura métodos que modularizan las opciones
-    public void opcionElegida(String opcion, String user) {
-
+    public void opcionElegida(String opcion, String user, Map<String, List<Tarea>> mapa) {
+        mapa.clear();
         try {
             Class.forName("org.sqlite.JDBC");
 
@@ -70,16 +73,15 @@ public class logicaOpciones extends HttpServlet {
                 switch (opcion) {
                     case "ver": {
 
-                        try (PreparedStatement ps = connection.prepareStatement("SELECT T.titulo, T.descripcion, T.completada, T.fecha_creacion, t.categoria_id, c.nombre\r\n"
-                                + //
-                                "FROM TAREAS T\r\n"
-                                + //
-                                "JOIN CATEGORIAS C ON T.categoria_id = C.id\r\n"
-                                + //
-                                "JOIN USUARIOS U ON T.usuario_id = U.ID WHERE U.NOMBRE_USUARIO = ?")) {
+                        try (PreparedStatement ps = connection.prepareStatement("SELECT C.ID, C.NOMBRE, T.TITULO, T.DESCRIPCION, T.COMPLETADA, T.FECHA_CREACION "
+                                + "FROM TAREAS T "
+                                + "JOIN CATEGORIAS C ON T.CATEGORIA_ID = C.ID "
+                                + "JOIN USUARIOS U ON T.USUARIO_ID = U.ID "
+                                + "WHERE U.NOMBRE_USUARIO = ?;")) {
 
                             // Establecemos el nombre del usuario
                             ps.setString(1, user);
+
                             try (ResultSet rs = ps.executeQuery()) {
                                 while (rs.next()) {
                                     String titulo = rs.getString("titulo");
@@ -88,7 +90,13 @@ public class logicaOpciones extends HttpServlet {
                                     String fechaCreacion = rs.getString("fecha_creacion");
                                     String nombreCategoria = rs.getString("nombre");
                                     int idCategoria = rs.getInt("categoria_id");
-                                    listaTareas.add(new Tarea(idCategoria, nombreCategoria, titulo, descripcion, completada, fechaCreacion));
+
+                                    Tarea t = new Tarea(idCategoria, nombreCategoria, titulo, descripcion, completada, fechaCreacion);
+                                    listaTareas.add(t);
+                                }
+
+                                for (Tarea tarea : listaTareas) {
+                                    System.out.println(tarea);
                                 }
                             } catch (SQLException e) {
                                 System.out.println("No se realizo la consulta");
