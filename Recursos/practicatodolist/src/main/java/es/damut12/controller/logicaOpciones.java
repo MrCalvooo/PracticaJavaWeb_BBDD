@@ -39,6 +39,7 @@ public class logicaOpciones extends HttpServlet {
             case "ver": {
                 opcionElegida(opcion, user, mapaTareas);
                 request.setAttribute("listaTareas", listaTareas);
+                request.setAttribute("mapaTareas", mapaTareas); // Pasa el mapa al JSP
                 request.getRequestDispatcher("/WEB-INF/views/verTareas.jsp").forward(request, response);
                 break;
             }
@@ -63,6 +64,7 @@ public class logicaOpciones extends HttpServlet {
     // estructura métodos que modularizan las opciones
     public void opcionElegida(String opcion, String user, Map<String, List<Tarea>> mapa) {
         mapa.clear();
+        listaTareas.clear(); // Asegura que también se limpie la lista
         try {
             Class.forName("org.sqlite.JDBC");
 
@@ -92,12 +94,11 @@ public class logicaOpciones extends HttpServlet {
                                     int idCategoria = rs.getInt("categoria_id");
 
                                     Tarea t = new Tarea(idCategoria, nombreCategoria, titulo, descripcion, completada, fechaCreacion);
-                                    listaTareas.add(t);
+
+                                    // Agrupar por nombre de categoría
+                                    mapa.computeIfAbsent(nombreCategoria, k -> new ArrayList<>()).add(t);
                                 }
 
-                                for (Tarea tarea : listaTareas) {
-                                    System.out.println(tarea);
-                                }
                             } catch (SQLException e) {
                                 System.out.println("No se realizo la consulta");
                             }
@@ -117,11 +118,5 @@ public class logicaOpciones extends HttpServlet {
         } catch (ClassNotFoundException e) {
 
         }
-        //conexión String url ruta absoluta tareas.db
-
-        //consulta o consultas que necesite realizar
-        //conecto
-        //completo consulta si lo necesito
-        //ejecuto sentencia guardando en ResultSet o recibiendo en un int resultado que compruebe
     }
 }

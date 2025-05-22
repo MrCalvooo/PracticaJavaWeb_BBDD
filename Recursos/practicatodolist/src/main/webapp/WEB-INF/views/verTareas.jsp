@@ -10,32 +10,34 @@
         </head>
 
         <body>
-            <%List<Tarea> listaTareas = (List) request.getAttribute("listaTareas");%>
-                <% if (listaTareas==null || listaTareas.isEmpty()) { %>
-                    <tr>
-                        <td colspan="4">No hay tareas para mostrar.</td>
-                    </tr>
-                    <% } else {%>
-                        <h2><a href="<%=request.getContextPath()%>/hello-servlet">Volver a opciones</a></h2>
+            <%Map<String, List<Tarea>> mapaTareas = (Map) request.getAttribute("mapaTareas");
+                if (mapa.isEmpty() || mapa == null) { %>
+                <tr>
+                    <td colspan="4">No hay tareas para mostrar.</td>
+                </tr>
+                <% } else {%>
+                    <h2><a href="<%=request.getContextPath()%>/hello-servlet">Volver a opciones</a></h2>
 
 
-                        <div class="container">
+                    <div class="container">
 
-                            <h2 class="categoria-titulo"><!--nombre categoria--> : <!--identificador categoria--></h2>
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Título</th>
-                                        <th>Descripción</th>
-                                        <th>Estado</th>
-                                        <th>Fecha de creación</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    
-                                </tbody>
-                            </table>
-                        </div>
+                        <h2 class="categoria-titulo"><!--nombre categoria--> : <!--identificador categoria-->
+                        </h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Título</th>
+                                    <th>Descripción</th>
+                                    <th>Estado</th>
+                                    <th>Fecha de creación</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <%}%>
         </body>
 
         </html>
