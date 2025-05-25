@@ -59,15 +59,18 @@ public class logicaOpciones extends HttpServlet {
                 // Informamos al usuario si la tarea se ha insertado correctamente
                 request.setAttribute("mensaje", mensaje);
 
-                // Enviamos el mensaje al JSP de insertarTarea
+                // Enviamos el mensaje al JSP de mensaje
                 request.getRequestDispatcher("/WEB-INF/views/mensaje.jsp").forward(request, response);
                 break;
             }
             case "eliminar": {
-                //recojo informacion de opciones.jsp
-                //lógica relacionada con la eliminación. Pensar en gestionar llamando a otros métodos para modularizar
-                //envío al jsp de respuesta lo que quiera
-                //llamo al jsp que quiero que se muestre
+                opcionElegida(opcion, user, categoriaID, tituloTarea, descripcionTarea);
+
+                // Informamos al usuario si la tarea se ha eliminado correctamente
+                request.setAttribute("mensaje", mensaje);
+
+                // Enviamos el mensaje al JSP de mensaje
+                request.getRequestDispatcher("/WEB-INF/views/mensaje.jsp").forward(request, response);
                 break;
             }
         }
@@ -81,6 +84,9 @@ public class logicaOpciones extends HttpServlet {
                 break;
             case "insertar":
                 insertar(user, categoriaID, tituloTarea, descripcionTarea);
+                break;
+            case "eliminar":
+                eliminar(categoriaID, tituloTarea, user);
                 break;
             default:
                 break;
@@ -177,6 +183,35 @@ public class logicaOpciones extends HttpServlet {
             }
         } catch (ClassNotFoundException e) {
             System.out.println("Error cargando el driver de la base de datos");
+        }
+    }
+
+    public void eliminar(String categoriaID, String tituloTarea, String user) {
+        try {
+            Class.forName("org.sqlite.JDBC");
+
+            try (Connection connection = DriverManager.getConnection(url); PreparedStatement ps = connection.prepareStatement("delete from tareas where categoria_id = ? and titulo = ? and usuario_id = ?");) {
+
+                int catID = Integer.parseInt(categoriaID);
+                int userID = Integer.parseInt(user);
+
+                ps.setInt(1, catID);
+                ps.setString(2, tituloTarea);
+                ps.setInt(3, userID);
+
+                int resultado = ps.executeUpdate();
+
+                if (resultado > 0) {
+                    mensaje = "Tarea eliminada correctamente";
+                } else {
+                    mensaje = "Error al eliminar la tarea";
+                }
+
+            } catch (SQLException e) {
+
+            }
+        } catch (ClassNotFoundException e) {
+
         }
     }
 }
