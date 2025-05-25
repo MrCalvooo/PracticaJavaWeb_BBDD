@@ -10,59 +10,54 @@
         </head>
 
         <body>
-            <%Map<String, List<Tarea>> mapa = (Map) request.getAttribute("mapaTareas");
-                if (mapa == null || mapa.isEmpty()) { %>
-                <tr>
-                    <td colspan="4">No hay tareas para mostrar.</td>
-                </tr>
-                <% } else {%>
-                    <h2><a href="<%=request.getContextPath()%>/hello-servlet">Volver a opciones</a></h2>
+            <% Map<Integer, List<Tarea>> mapa = (Map<Integer, List<Tarea>>) request.getAttribute("mapaTareas");
+                    if (mapa == null || mapa.isEmpty()) { %>
+                    <tr>
+                        <td colspan="4">No hay tareas para mostrar.</td>
+                    </tr>
+                    <% } else { %>
+                        <h2><a href="<%=request.getContextPath()%>/hello-servlet">Volver a opciones</a></h2>
+                        <% for (Map.Entry<Integer, List<Tarea>> entry : mapa.entrySet()) {
+                            Integer catId = entry.getKey();
+                            List<Tarea> tareas = entry.getValue(); %>
+                                <div class="container">
 
-                    <!--Recorremos el mapa-->
-                    <%for (Map.Entry<String, List<Tarea>> entry : mapa.entrySet()) {
-                        // Almacenamos la clave en una variable
-                        String cat = entry.getKey();
-                        // Obtenemos la lista de cada clave
-                        List<Tarea> tareas = entry.getValue();%>
-                            <div class="container">
-
-                                <h2 class="categoria-titulo">
-                                    <!--Mostramos el nombre de la categoria y su id-->
-                                    <%=cat %> : <%= tareas.get(0).getIdCategoria()%>
-                                </h2>
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>Título</th>
-                                            <th>Descripción</th>
-                                            <th>Estado</th>
-                                            <th>Fecha de creación</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <!--Recorremos la lista (que es el valor del mapa) y mostramos sus datos-->
-                                        <%for (Tarea tarea : tareas) {%>
+                                    <h2 class="categoria-titulo">
+                                        Categoría ID: <%= catId %> : <%= tareas.get(0).getCategoria() %>
+                                    </h2>
+                                    <table>
+                                        <thead>
                                             <tr>
-                                                <td>
-                                                    <%=tarea.getTitulo()%>
-                                                </td>
-                                                <td>
-                                                    <%=tarea.getDescripcion()%>
-                                                </td>
-                                                <td>
-                                                    <%=tarea.isCompletada()%>
-                                                </td>
-                                                <td>
-                                                    <%=tarea.getFechaCreacion()%>
-                                                </td>
+                                                <th>Título</th>
+                                                <th>Descripción</th>
+                                                <th>Estado</th>
+                                                <th>Fecha de creación</th>
                                             </tr>
-                                            <%}%>
-                                    </tbody>
-                                </table>
-                            </div>
+                                        </thead>
+                                        <tbody>
+                                            <!--Recorremos la lista (que es el valor del mapa) y mostramos sus datos-->
+                                            <% for (Tarea tarea : tareas) { %>
+                                                <tr>
+                                                    <td>
+                                                        <%= tarea.getTitulo() %>
+                                                    </td>
+                                                    <td>
+                                                        <%= tarea.getDescripcion() %>
+                                                    </td>
+                                                    <td>
+                                                        <%= tarea.isCompletada() %>
+                                                    </td>
+                                                    <td>
+                                                        <%= tarea.getFechaCreacion() %>
+                                                    </td>
+                                                </tr>
+                                                <% } %>
+                                        </tbody>
+                                    </table>
+                                </div>
 
-                            <%}%>
-                                <%}%>
+                                <% } %>
+                                    <% } %>
         </body>
 
         </html>

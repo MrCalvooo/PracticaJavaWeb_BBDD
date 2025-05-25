@@ -21,6 +21,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet(value = "/opcionesL")
 public class logicaOpciones extends HttpServlet {
 
+    private String mensaje = "";
     private final String url = "jdbc:sqlite:D:\\Usuarios\\calvo\\Desktop\\DAM\\PracticaJavaWeb_BBDD\\Recursos\\tareas.db";
     private final List<Tarea> listaTareas = new ArrayList<>();
     private final Map<Integer, List<Tarea>> mapaTareas = new HashMap<>();
@@ -54,9 +55,12 @@ public class logicaOpciones extends HttpServlet {
 
             case "insertar": {
                 opcionElegida(opcion, user, categoriaID, tituloTarea, descripcionTarea);
-                //lógica relacionada con la inserción. Pensar en gestionar llamando a otros métodos para modularizar
-                //envío al jsp de respuesta lo que quiera
-                //llamo al jsp que quiero que se muestre
+
+                // Informamos al usuario si la tarea se ha insertado correctamente
+                request.setAttribute("mensaje", mensaje);
+
+                // Enviamos el mensaje al JSP de insertarTarea
+                request.getRequestDispatcher("/WEB-INF/views/mensaje.jsp").forward(request, response);
                 break;
             }
             case "eliminar": {
@@ -139,25 +143,40 @@ public class logicaOpciones extends HttpServlet {
         try {
             Class.forName("org.sqlite.JDBC");
 
-            // Conseguimos el numero de tareas con ese mismo ID de categoria
-            // y le sumamos 1 para conseguir el nuevo ID de la tarea
-            int idTarea = mapaTareas.get(categoriaID).size() + 1;
-
+            // Obtenemos el id de la categoria que es la clave del mapa
+            int catID = Integer.parseInt(categoriaID);
+            // Generamos un id único para la tarea buscando el máximo id existente en la tabla
+            int idTarea = 1;
+            try (Connection connection = DriverManager.getConnection(url); PreparedStatement psMax = connection.prepareStatement("SELECT MAX(id) FROM tareas"); ResultSet rs = psMax.executeQuery()) {
+                if (rs.next()) {
+                    // Almacenamos el nuevo id de la tarea
+                    idTarea = rs.getInt(1) + 1;
+                }
+            } catch (SQLException e) {
+                System.out.println("Error obteniendo el id máximo de tareas: " + e.getMessage());
+            }
             System.out.println("ID de la tarea: " + idTarea);
 
             try (Connection connection = DriverManager.getConnection(url); PreparedStatement ps = connection.prepareStatement("insert into tareas(id, usuario_id, categoria_id, titulo, descripcion, completada, fecha_creacion) values(?, ?, ?, ?, ?, 0, CURRENT_TIMESTAMP)")) {
                 ps.setInt(1, idTarea);
                 ps.setInt(2, Integer.parseInt(user));
-                ps.setInt(3, Integer.parseInt(categoriaID));
+                ps.setInt(3, catID);
                 ps.setString(4, tituloTarea);
                 ps.setString(5, descripcionTarea);
 
+                // Insertamos los datos
+                int resultado = ps.executeUpdate();
+                if (resultado > 0) {
+                    mensaje = "Tarea insertada correctamente";
+                } else {
+                    mensaje = "Error al insertar la tarea";
+                }
             } catch (Exception e) {
                 System.out.println("Error al insertar la tarea");
                 System.out.println(e.getMessage());
             }
         } catch (ClassNotFoundException e) {
-
+            System.out.println("Error cargando el driver de la base de datos");
         }
     }
 }
