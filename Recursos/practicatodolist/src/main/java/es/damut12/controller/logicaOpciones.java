@@ -94,6 +94,10 @@ public class logicaOpciones extends HttpServlet {
     }
 
     public void verTareas(String user, Map<Integer, List<Tarea>> mapa) {
+
+        // Limpiamos el mapa y la lista antes de cada consulta
+        mapa.clear(); 
+        listaTareas.clear();
         try {
             Class.forName("org.sqlite.JDBC");
 
