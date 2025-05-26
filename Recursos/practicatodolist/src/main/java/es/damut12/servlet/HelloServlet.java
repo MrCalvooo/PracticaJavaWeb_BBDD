@@ -48,8 +48,8 @@ public class HelloServlet extends HttpServlet {
 
                 // Ejecutamos la consulta
                 try (ResultSet rs = ps.executeQuery()) {
-                    String user = "", pass = "";
-                    int id = 0;
+                    String user, pass;
+                    int id;
                     // Si retorna datos los almacenamos
                     if (rs.next()) {
                         user = rs.getString(1);
@@ -66,13 +66,13 @@ public class HelloServlet extends HttpServlet {
                         request.getRequestDispatcher("/WEB-INF/views/opciones.jsp").forward(request, response);
                     } else {
                         // Al no encontrarse los datos se informa al usuario
-                        mensaje = "Usuario o contraseña incorrectos";
+                        mensaje = "Las credenciales no son correctas";
                         request.setAttribute("mensaje", mensaje);
                         request.getRequestDispatcher("/WEB-INF/views/mensaje.jsp").forward(request, response);
                     }
 
                 } catch (SQLException e) {
-                    mensaje = "No se realizo la consulta";
+                    mensaje = "Error al obtener las credenciales";
                     request.getRequestDispatcher("/WEB-INF/views/mensaje.jsp").forward(request, response);
                     System.out.println("No se realizo la consulta");
                     System.out.println(e.getMessage());

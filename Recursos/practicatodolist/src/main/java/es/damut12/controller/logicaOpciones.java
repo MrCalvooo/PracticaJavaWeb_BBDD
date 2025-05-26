@@ -177,7 +177,7 @@ public class logicaOpciones extends HttpServlet {
                 // Insertamos los datos
                 int resultado = ps.executeUpdate();
                 if (resultado > 0) {
-                    mensaje = "Tarea insertada correctamente";
+                    mensaje = "La insercion se ha realizado correctamente";
                 } else {
                     mensaje = "Error al insertar la tarea";
                 }
@@ -206,7 +206,7 @@ public class logicaOpciones extends HttpServlet {
                 int resultado = ps.executeUpdate();
 
                 if (resultado > 0) {
-                    mensaje = "Tarea eliminada correctamente";
+                    mensaje = "La eliminacion se ha realizado correctamente";
                 } else {
                     mensaje = "Error al eliminar la tarea";
                 }
