@@ -91,17 +91,7 @@ public class HelloServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        // los .jsp incluidos en /WEB-INF/views no son visibles desde el navegador por
-        // cuestiones de seguridad
-        // el servidor Tomcat no permite el acceso directo a ellos
-        // por eso, si queremos redirigir desde esos.jsp, tendremos que hacerlo pasando
-        // por el Servlet
-        // esas redirecciones el Servlet las gestiona desde el método doGet
-        // debes controlar aquí si quieres enviar algo a otro .jsp
-        // y el .forward al .jsp que corresponda
-
-        request.getRequestDispatcher("index.jsp").forward(request, response);
-
+        request.getRequestDispatcher("/WEB-INF/views/index.jsp").forward(request, response);
     }
 
 }

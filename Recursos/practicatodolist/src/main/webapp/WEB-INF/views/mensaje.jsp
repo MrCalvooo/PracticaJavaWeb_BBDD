@@ -12,7 +12,7 @@
         <div class="container">
             <!--RECUPERO LOS DATOS QUE ME MANDA EL SERVLET-->
             <h1>RESULTADO DE LA OPERACIÓN</h1>
-            <h2><a href=<!--a dónde me envía el enlace--><!--el texto será volver a inicio o volver a opciones--></a>
+            <h2><a href="<%=request.getContextPath()%>/hello-servlet">Volver</a>
             </h2>
             <div class="mensaje">
                 <%String mensaje=(String) request.getAttribute("mensaje");%>
