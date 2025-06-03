@@ -10,15 +10,21 @@
         </head>
 
         <body>
+            <h2><a href="<%=request.getContextPath()%>/hello-servlet">Volver a opciones</a></h2>
+            <!-- Recuperamos el usuario y su ID desde los atributos de la solicitud -->
             <% Map<Integer, List<Tarea>> mapa = (Map<Integer, List<Tarea>>) request.getAttribute("mapaTareas");
+                    // Si el mapa es nulo mostrmos que no hay tareas
                     if (mapa == null || mapa.isEmpty()) { %>
                     <tr>
                         <td colspan="4">No hay tareas para mostrar.</td>
                     </tr>
-                    <% } else { %>
-                        <h2><a href="<%=request.getContextPath()%>/hello-servlet">Volver a opciones</a></h2>
-                        <% for (Map.Entry<Integer, List<Tarea>> entry : mapa.entrySet()) {
+                    <% } else {%>
+                        <!-- Recorremos el mapa de tareas -->
+                        <%for (Map.Entry<Integer, List<Tarea>> entry : mapa.entrySet()) {
+
                             Integer catId = entry.getKey();
+
+                            // Obtenemos la lista de tareas asociada a la categoría
                             List<Tarea> tareas = entry.getValue(); %>
                                 <div class="container">
 

@@ -21,6 +21,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet(value = "/opcionesL")
 public class logicaOpciones extends HttpServlet {
 
+    // Declaramos las variables que vamos a utilizar
     private String mensaje = "";
     private final String url = "jdbc:sqlite:D:\\Usuarios\\calvo\\Desktop\\DAM\\PracticaJavaWeb_BBDD\\Recursos\\tareas.db";
     private final List<Tarea> listaTareas = new ArrayList<>();
@@ -41,6 +42,7 @@ public class logicaOpciones extends HttpServlet {
 
         switch (opcion) {
             case "ver": {
+                // Llamamos al método que obtiene las tareas del usuario
                 opcionElegida(opcion, user, categoriaID, tituloTarea, descripcionTarea);
                 System.out.println(mapaTareas);
 
@@ -54,6 +56,7 @@ public class logicaOpciones extends HttpServlet {
             }
 
             case "insertar": {
+                // Llamamos al método que inserta la tarea
                 opcionElegida(opcion, user, categoriaID, tituloTarea, descripcionTarea);
 
                 // Informamos al usuario si la tarea se ha insertado correctamente
@@ -64,6 +67,7 @@ public class logicaOpciones extends HttpServlet {
                 break;
             }
             case "eliminar": {
+                // Llamamos al método que elimina la tarea
                 opcionElegida(opcion, user, categoriaID, tituloTarea, descripcionTarea);
 
                 // Informamos al usuario si la tarea se ha eliminado correctamente
@@ -96,9 +100,10 @@ public class logicaOpciones extends HttpServlet {
     public void verTareas(String user, Map<Integer, List<Tarea>> mapa) {
 
         // Limpiamos el mapa y la lista antes de cada consulta
-        mapa.clear(); 
+        mapa.clear();
         listaTareas.clear();
         try {
+            // Cargamos el driver de la base de datos
             Class.forName("org.sqlite.JDBC");
 
             // Conectamos a la base de datos y preparamos la consulta
@@ -134,6 +139,7 @@ public class logicaOpciones extends HttpServlet {
 
                     }
 
+                    // Debug
                     System.out.println("Total tareas encontradas: " + listaTareas.size());
 
                 } catch (SQLException e) {
@@ -151,6 +157,8 @@ public class logicaOpciones extends HttpServlet {
 
     public void insertar(String user, String categoriaID, String tituloTarea, String descripcionTarea) {
         try {
+
+            // Cargamos el driver de la base de datos
             Class.forName("org.sqlite.JDBC");
 
             // Obtenemos el id de la categoria que es la clave del mapa
@@ -158,16 +166,22 @@ public class logicaOpciones extends HttpServlet {
             // Generamos un id único para la tarea buscando el máximo id existente en la tabla
             int idTarea = 1;
             try (Connection connection = DriverManager.getConnection(url); PreparedStatement psMax = connection.prepareStatement("SELECT MAX(id) FROM tareas"); ResultSet rs = psMax.executeQuery()) {
+
+                // Ejecutamos la consulta para obtener el id máximo
                 if (rs.next()) {
                     // Almacenamos el nuevo id de la tarea
                     idTarea = rs.getInt(1) + 1;
                 }
+
             } catch (SQLException e) {
                 System.out.println("Error obteniendo el id máximo de tareas: " + e.getMessage());
             }
             System.out.println("ID de la tarea: " + idTarea);
 
+            // Conectamos a la base de datos y preparamos la consulta de inserción
             try (Connection connection = DriverManager.getConnection(url); PreparedStatement ps = connection.prepareStatement("insert into tareas(id, usuario_id, categoria_id, titulo, descripcion, completada, fecha_creacion) values(?, ?, ?, ?, ?, 0, CURRENT_TIMESTAMP)")) {
+
+                // Asignamos los valores a los parámetros de la consulta
                 ps.setInt(1, idTarea);
                 ps.setInt(2, Integer.parseInt(user));
                 ps.setInt(3, catID);
@@ -181,6 +195,7 @@ public class logicaOpciones extends HttpServlet {
                 } else {
                     mensaje = "Error al insertar la tarea";
                 }
+
             } catch (Exception e) {
                 System.out.println("Error al insertar la tarea");
                 System.out.println(e.getMessage());
@@ -192,10 +207,14 @@ public class logicaOpciones extends HttpServlet {
 
     public void eliminar(String categoriaID, String tituloTarea, String user) {
         try {
+
+            // Cargamos el driver de la base de datos
             Class.forName("org.sqlite.JDBC");
 
+            // Conectamos a la base de datos y preparamos la consulta de eliminación
             try (Connection connection = DriverManager.getConnection(url); PreparedStatement ps = connection.prepareStatement("delete from tareas where categoria_id = ? and titulo = ? and usuario_id = ?");) {
 
+                // Asignamos los valores a los parámetros de la consulta
                 int catID = Integer.parseInt(categoriaID);
                 int userID = Integer.parseInt(user);
 
@@ -203,6 +222,7 @@ public class logicaOpciones extends HttpServlet {
                 ps.setString(2, tituloTarea);
                 ps.setInt(3, userID);
 
+                // Ejecutamos la consulta de eliminación
                 int resultado = ps.executeUpdate();
 
                 if (resultado > 0) {
